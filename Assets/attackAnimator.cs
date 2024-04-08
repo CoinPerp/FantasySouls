@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class attackAnimator : StateMachineBehaviour
 {
-    private PlayerMovement player;
+    private AttackChain attack;
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player = animator.GetComponent<PlayerMovement>();
-        if(player != null )
-        {
-            player.move = false;
-            Debug.Log("not go");
-        }
+            attack = animator.GetComponent<AttackChain>();
+
     }
 
    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -22,8 +18,7 @@ public class attackAnimator : StateMachineBehaviour
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player.move = true;
-        Debug.Log("go");
+
 
     }
 

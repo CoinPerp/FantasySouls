@@ -1,84 +1,73 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; // Import the UI namespace to work with UI elements
+using UnityEngine.InputSystem;
 
 public class AttackChain : MonoBehaviour
 {
+    public Slider slider;
+    public float increaseRate = 1f;
+    private bool sliderWasFilled = false;
 
     private Animator animator;
     private PlayerMovement player;
+    private PlayerInput playerInput; // Reference to the PlayerInput component
+    private InputAction moveAction;
 
     private void Start()
     {
         player = GetComponent<PlayerMovement>();
-        animator = GetComponent<Animator>();    
-
+        animator = GetComponent<Animator>();
+        playerInput = GetComponent<PlayerInput>(); // Ensure there's a PlayerInput component attached to the same GameObject
+        moveAction = playerInput.actions["Hit"]; // "Move" should be replaced with the name of your actual input action
+        moveAction.canceled += OnMoveActionCanceled;
+        moveAction.started += OnMoveActionStarted;
     }
-
-    private int currentAttackIndex = -1; // -1 indicates no attack has been started
-    private float chainWindow = 0.75f; // Time in seconds to allow the next attack in the chain
-    private bool isChaining = false;
 
     void Update()
     {
-        // Check for the attack input
-        if (Input.GetKeyDown(KeyCode.E))
+        if (moveAction.IsPressed())
         {
-            ChainAttack();
-        }
-    }
+            animator.SetBool(AnimationStrings.Hold, true); // Set the Hold boolean to true
 
-    public void ChainAttack()
-    {
-        if (!isChaining || currentAttackIndex >= 2)
-        {
-            currentAttackIndex = 0;
+            if (slider.value < slider.maxValue)
+            {
+                slider.value += increaseRate * Time.deltaTime;
+            }
+            else if (slider.value >= slider.maxValue)
+            {
+                sliderWasFilled = true;
+            }
         }
         else
         {
-            currentAttackIndex++;
-
+            animator.SetBool(AnimationStrings.Hold, false);
         }
+    }
 
-        StopAllCoroutines(); // Ensure no other chain windows are running
-        StartCoroutine(AttackChainWindow());
+    private void OnMoveActionStarted(InputAction.CallbackContext context)
+    {
+        // Now handled in Update
+    }
 
-        switch (currentAttackIndex)
+    private void OnMoveActionCanceled(InputAction.CallbackContext context)
+    {
+        if (sliderWasFilled)
         {
-            case 0:
-                Attack1();
-                break;
-            case 1:
-                Attack2();
-                break;
-            case 2:
-                Attack3();
-                break;
+            animator.SetTrigger(AnimationStrings.StrongAttack);
         }
+        else
+        {
+            animator.SetTrigger(AnimationStrings.Attack);
+        }
+        ResetSlider();
+        animator.SetBool(AnimationStrings.Hold, false);
     }
 
-    IEnumerator AttackChainWindow()
+    private void ResetSlider()
     {
-        isChaining = true;
-        yield return new WaitForSeconds(chainWindow);
-        isChaining = false;
-    }
-
-    void Attack1()
-    {
-        animator.SetTrigger("Attack1");
-
-    }
-
-    void Attack2()
-    {
-        animator.SetTrigger("Attack2");
-
-    }
-
-    void Attack3()
-    {
-        animator.SetTrigger("Attack3");
-
+        slider.value = slider.minValue;
+        sliderWasFilled = false;
     }
 }
