@@ -5,9 +5,8 @@ using UnityEngine.InputSystem;
 public class PlayerMovementMain : MonoBehaviour
 {
     public Rigidbody2D rb;
-    public Transform groundCheck;
-    public LayerMask groundLayer;
 
+    TouchingDirection touchingdirection;
     private float horizontal;
     public float speed = 8f;
     private float jumpingPower = 16f;
@@ -18,8 +17,13 @@ public class PlayerMovementMain : MonoBehaviour
 
     private void Start()
     {
+
+    }
+    private void Awake()
+    {
         animator = GetComponent<Animator>(); // Make sure your GameObject has an Animator component.
         move = true;
+        touchingdirection = GetComponent<TouchingDirection>();
     }
 
     private void FixedUpdate()
@@ -27,10 +31,12 @@ public class PlayerMovementMain : MonoBehaviour
         float joystickInput = variableJoystick.Horizontal; // Make sure the joystick is setup correctly.
         float keyboardInput = Input.GetAxis("Horizontal");
         horizontal = joystickInput + keyboardInput;
-        if (move)
+        if (CanMove && isAlive)
         {
             horizontal = Mathf.Clamp(horizontal, -1f, 1f);
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+            animator.SetFloat(AnimationStrings.Yvelocity, rb.velocity.y);
+
 
             // Correctly setting "Ismoving" based on player movement and grounded state
             if (Mathf.Abs(horizontal) > 0f)
@@ -43,33 +49,44 @@ public class PlayerMovementMain : MonoBehaviour
             }
         }
 
-        // Fixed logic for Jump animation. It was inverted in your original code.
-        if (IsGrounded())
-        {
-            animator.SetBool(AnimationStrings.Grounded, false);
-        }
-        else
-        {
-            animator.SetBool(AnimationStrings.Grounded, true);
-        }
 
         if (!isFacingRight && horizontal > 0f || isFacingRight && horizontal < 0f)
         {
-            Flip();
+            if(isAlive)
+            {
+                Flip();
+            }
+            else
+            {
+                Debug.Log("target not alive can't flip");
+            }
         }
     }
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (context.performed && IsGrounded())
+        if (context.performed && touchingdirection.IsGrounded)
         {
+            animator.SetTrigger(AnimationStrings.Jump);
+
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
         }
     }
 
-    private bool IsGrounded()
+ 
+    public bool CanMove
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        get
+        {
+            return animator.GetBool(AnimationStrings.canMove);
+        }
+    }
+    public bool isAlive
+    {
+        get
+        {
+            return animator.GetBool(AnimationStrings.isAlive);
+        }
     }
 
     private void Flip()
@@ -80,8 +97,6 @@ public class PlayerMovementMain : MonoBehaviour
         transform.localScale = localScale;
     }
 
-    // Removed the Move method as it was not utilized properly in this script. 
-    // If you're using the new Input System's action callbacks, set up those calls directly within the Input Action's settings.
 
     public IEnumerator ReduceSpeed(float percent, float duration)
     {
