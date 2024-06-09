@@ -1,13 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TouchingDirection : MonoBehaviour
 {
+    public bool isPlayer;
     CapsuleCollider2D touchingcol;
     public float groundDistance = 0.1f;
     public float wallDistance = 0.2f;
     public float ceillingDistance = 0.1f;
+
+    public Transform wallCheck;
+    public Transform ceilCheck;
+    public LayerMask groundLayer;
 
     public ContactFilter2D castFilter;
     RaycastHit2D[] groundHits = new RaycastHit2D[5];
@@ -67,8 +73,21 @@ public class TouchingDirection : MonoBehaviour
     {
         // Check if the collider is touching the ground within the specified distance
         IsGrounded = touchingcol.Cast(Vector2.down, castFilter, groundHits, groundDistance) > 0;
-        IsOnWall = touchingcol.Cast(Wallcheckdirection, castFilter, wallHits, wallDistance) > 0;
-        IsOnCeilling = touchingcol.Cast(Vector2.up, castFilter, ceillingHits, ceillingDistance) > 0;
+
+
+        if (!isPlayer)
+        {
+            IsOnWall = touchingcol.Cast(Wallcheckdirection, castFilter, wallHits, wallDistance) > 0;
+            IsOnCeilling = touchingcol.Cast(Vector2.up, castFilter, ceillingHits, ceillingDistance) > 0;
+
+        }
+        if(isPlayer)
+        {
+            IsOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.5f, groundLayer);
+            IsOnCeilling = Physics2D.OverlapCircle(ceilCheck.position, 0.5f, groundLayer);
+
+
+        }
 
     }
 }

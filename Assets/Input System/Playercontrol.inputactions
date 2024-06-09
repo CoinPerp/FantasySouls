@@ -42,9 +42,27 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Hit",
+                    "name": "Attack",
                     "type": "Button",
                     "id": "bebe0fe5-a896-4503-bbb6-1523810d6164",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Roll",
+                    "type": "Button",
+                    "id": "c4738cc1-f58e-41b4-bab8-555754faf13c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "StrongAttack",
+                    "type": "Button",
+                    "id": "ebc650b9-36ea-4586-a1e7-a7ea2e80d1c9",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -253,7 +271,7 @@
                 {
                     "name": "",
                     "id": "e81b7131-d53a-4489-a593-9b024759550b",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -279,7 +297,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Hit",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -290,7 +308,40 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Hit",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0ee4249c-877b-417b-bd92-62f73e650fc6",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ee9e854b-faeb-44c6-934e-c43ac3c17aaa",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "StrongAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cc329bcf-e1f1-444d-a2d5-54c6acd7fa44",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "StrongAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
