@@ -85,6 +85,8 @@ public class TouchingDirection : MonoBehaviour
         {
             IsOnWall = Physics2D.OverlapCircle(wallCheck.position, 0.5f, groundLayer);
             IsOnCeilling = Physics2D.OverlapCircle(ceilCheck.position, 0.5f, groundLayer);
+
+
         }
 
     }

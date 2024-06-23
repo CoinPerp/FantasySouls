@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class DamageAble : MonoBehaviour
 {
+    public UnityEvent<float, Vector2> damageableHit;
     private Animator animator;
     private float _maxHealth = 100f;
     [SerializeField]
@@ -14,10 +15,6 @@ public class DamageAble : MonoBehaviour
     Rigidbody2D rb;
     private CapsuleCollider2D boxCollider;
     private float recentDamageAmount = 0; // Variable to store recent damage amount
-    public float poise = 100f;
-    public float Maxpoise = 100f;
-    public float counterDuration = 5.0f; // Duration for the counter in seconds
-    private Coroutine poiseResetCoroutine;
 
 
 
@@ -63,43 +60,25 @@ public class DamageAble : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
+       // _health = _maxHealth; // Initialize health to maxHealth
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<CapsuleCollider2D>();
-        poise = Maxpoise;
 
     }
 
-    public void Hit(float damage, float poiseDamage)
+    public void Hit(float damage)
     {
         if (isAlive && !invincible)
         {
             ResetRecentDamage();
-            if(poise >0)
-            {
-                health -= damage;
-
-            }
-            else
-            {
-                health -= damage * 2;
-            }
-
+            health -= damage;
             invincible = true; 
-            Hit(damage, poiseDamage);
+            Hit(damage);
             lockVelocity = true;
-            poise -= poiseDamage;
+            animator.SetTrigger(AnimationStrings.hit);
             timeSinceHit = 0; // Reset time since hit
             recentDamageAmount = damage; // Add the damage to the recent damage amount
-            if (poise <= 0)
-            {
-                animator.SetTrigger(AnimationStrings.hit);
-                poiseResetCoroutine = StartCoroutine(ResetPoiseAfterDelay(0.5f));
-            }
-            if (poiseResetCoroutine != null)
-            {
-                StopCoroutine(poiseResetCoroutine);
-            }
-            poiseResetCoroutine = StartCoroutine(ResetPoiseAfterDelay(5.0f));
+
         }
     }
 
@@ -113,17 +92,20 @@ public class DamageAble : MonoBehaviour
                 invincible = false; // End invincibility after invincibilityTime
             }
         }
-    }
 
-
-    private IEnumerator ResetPoiseAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        resetpoise();
     }
-    public void resetpoise()
+    public void Onhit(int damage, Vector2 knockback)
     {
-        poise = Maxpoise;
+        if(rb != null)
+        {
+            rb.velocity = new Vector2(knockback.x, rb.velocity.y + knockback.y);
+            Debug.Log(knockback.x +"and"+ knockback.y);
+        }
+        else
+        {
+            Debug.Log("cant find rb");
+        }
+
     }
     public void RecoverHealth(float amount)
     {
@@ -141,12 +123,6 @@ public class DamageAble : MonoBehaviour
         }
     }
 
-    private IEnumerator PoiseHit()
-    {
-
-        yield return new WaitForSeconds(counterDuration); // Wait for the specified duration
-        poise = Maxpoise;
-    }
     public float GetRecentDamageAmount() 
     {
         return recentDamageAmount;
