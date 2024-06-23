@@ -1,74 +1,80 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using System.Collections;
+using System;
+
 
 [RequireComponent(typeof(Rigidbody2D), typeof(TouchingDirection))]
 public class EnemyScripts : MonoBehaviour
 {
-    private Transform playerTransform;
-
     Animator animator;
-    public float walkSpeed;
+    public float walkSpeed = 5f;
     public float runSpeed;
-
-    public DetectionZone attackZone;
-    public CheckForPlayer checkZone;
+    private DetectionZone attackZone;
+    private CheckForPlayer checkZone;
     DamageAble damageAble;
     Rigidbody2D rb;
     TouchingDirection touchingDirection;
-    public float lerpSpeed = 0.1f;
     public bool moveInBothAxes = false;
-    public enum walkableDirection { right, left }
+    private GameObject player;
+    public int randomnumbers;
+    private Transform target; // The target to move towards
+    public float speed = 5f; // The speed at which to mov
+    public float topspeed = 7.5f; // The speed at which to mov
+    private bool _attackState = false;
+    private Vector3 attackDirection;
 
-    private walkableDirection _walkDirection;
-    private Vector2 walkableDirectionVector;
-    public bool attackState;
-    public bool walkState;
-    public bool getPlayerpos;
-    public walkableDirection WalkDirection
-    {
-        get { return _walkDirection; }
-        set
-        {
-            if (_walkDirection != value)
-            {
-                gameObject.transform.localScale = new Vector2(gameObject.transform.localScale.x * -1, gameObject.transform.localScale.y);
-                if (value == walkableDirection.right)
-                {
-                    walkableDirectionVector = Vector2.right;
-                }
-                else if (value == walkableDirection.left)
-                {
-                    walkableDirectionVector = Vector2.left;
-                }
-            }
-            _walkDirection = value;
-        }
-    }
+    private GameObject trail;
 
-    public bool _hasTarget = false;
-    public bool hasTarget
+    public GameObject objectToInstantiate; // The object to instantiate
+    public float instantiationDistance = 1.0f; // Distance in front of the character to instantiate the object
+    public Vector2 instantiationOffset = Vector2.zero; // Offset from the instantiation position
+
+    public bool attackState
     {
-        get { return _hasTarget; }
+        get { return _attackState; }
         private set
         {
-            _hasTarget = value;
-            animator.SetBool(AnimationStrings.hasTarget, value);
+            _attackState = value;
+            animator.SetBool(AnimationStrings.AttackState, value);
         }
     }
-    public bool _moveToTarget = false;
+    public bool _attacking = false;
+    public bool attacking
+    {
+        get { return _attacking; }
+        private set
+        {
+            _attacking = value;
+            animator.SetBool(AnimationStrings.Attacking, value);
+        }
+    }
+
+    private bool _moveToTarget = false;
     public bool moveToTarget
     {
         get { return _moveToTarget; }
         private set
         {
             _moveToTarget = value;
-
-
+            animator.SetBool(AnimationStrings.Move, value);
         }
     }
 
+    public bool turnable
+    {
+        get
+        {
+            return animator.GetBool(AnimationStrings.Turnable);
+        }
+    }
+    public bool RunChargeAttack
+    {
+        get
+        {
+            return animator.GetBool(AnimationStrings.RunChargeAttack);
+        }
+    }
     public bool canMove
     {
         get
@@ -80,121 +86,134 @@ public class EnemyScripts : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        playerTransform = player.transform;
+        player = GameObject.FindGameObjectWithTag("Player");
 
         touchingDirection = GetComponent<TouchingDirection>();
         animator = GetComponent<Animator>();
         damageAble = GetComponent<DamageAble>();
-        walkState = true;
 
-        // Get the DetectionZone and CheckForPlayer scripts from the child GameObjects
         Transform attackZoneTransform = transform.Find("AttackRange");
         Transform checkZoneTransform = transform.Find("CheckForPlayer");
 
-        if (attackZoneTransform != null)
-        {
-            attackZone = attackZoneTransform.GetComponent<DetectionZone>();
-            if (attackZone == null)
-            {
-                Debug.LogWarning("DetectionZone component not found on AttackRange");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("AttackRange object not found");
-        }
+        attackZone = attackZoneTransform.GetComponent<DetectionZone>();
+        checkZone = checkZoneTransform.GetComponent<CheckForPlayer>();
 
-        if (checkZoneTransform != null)
-        {
-            checkZone = checkZoneTransform.GetComponent<CheckForPlayer>();
-            if (checkZone == null)
-            {
-                Debug.LogWarning("CheckForPlayer component not found on CheckForPlayer object");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("CheckForPlayer object not found");
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        if (canMove && touchingDirection.IsGrounded && !hasTarget && moveToTarget)
-        {
-            if ((playerTransform.position.x < transform.position.x && WalkDirection == walkableDirection.right) ||
-                   (playerTransform.position.x > transform.position.x && WalkDirection == walkableDirection.left))
-            {
-                Flipdirection();
-            }
-
-            Vector2 direction = playerTransform.position - transform.position;
-
-            if (!moveInBothAxes)
-            {
-                direction.y = 0; // Zero out the y direction if moveInBothAxes is false
-            }
-
-            direction.Normalize();
-            rb.velocity = new Vector2(direction.x * walkSpeed, rb.velocity.y); // Preserve vertical velocity
-            if (rb.velocity.x > 0)
-            {
-                WalkDirection = walkableDirection.right;
-            }
-            else if (rb.velocity.x < 0)
-            {
-                WalkDirection = walkableDirection.left;
-            }
-        }
-        else if (touchingDirection.IsGrounded && canMove && attackState)
-        {
-            rb.velocity = new Vector2(0, rb.velocity.y); // Preserve vertical velocity
-        }
-        else
-        {
-            rb.velocity = new Vector2(0, rb.velocity.y); // Preserve vertical velocity
-        }
-
-    }
-
-    private void Flipdirection()
-    {
-        if (WalkDirection == walkableDirection.right)
-        {
-            WalkDirection = walkableDirection.left;
-        }
-        else if (WalkDirection == walkableDirection.left)
-        {
-            WalkDirection = walkableDirection.right; 
-        }
-        else
-        {
-            Debug.Log("Illegal walk direction");
-        }
+        Transform trailObjectTransform = transform.Find("Trail");
+        trail = trailObjectTransform.gameObject;
     }
 
     private void Update()
     {
-        if (attackZone.detectedcolliders.Count > 0)
-        {
-            hasTarget = true;
-        }
-        else
-        {
-
-            hasTarget = false;
-        }
-        if(checkZone.playerPos)
-        {
-            moveToTarget = true;
-        }
-        else
-        {
-            moveToTarget = false;
-
-        }
+        UpdateState();
+        HandleMovement();
 
     }
 
+    private void UpdateState()
+    {
+        attackState = attackZone.detectedcolliders.Count > 0;
+        moveToTarget = checkZone.playerPos;
+    }
+
+    private void HandleMovement()
+    {
+
+        if (moveToTarget && !attackState)
+        {
+
+            Vector3 target = player.transform.position;
+            Vector3 direction = (target - transform.position).normalized;
+            if (canMove)
+            {
+                transform.position = transform.position + direction * speed * Time.deltaTime;
+            }
+
+
+
+            if (turnable)
+            {
+                if (direction.x > 0 && transform.localScale.x < 0)
+                {
+                    Flip();
+                }
+                else if (direction.x < 0 && transform.localScale.x > 0)
+                {
+                    Flip();
+                }
+            }
+
+
+        }
+
+        if (RunChargeAttack)
+        {
+
+            transform.position = new Vector3(transform.position.x + attackDirection.x * topspeed * Time.deltaTime, transform.position.y, transform.position.z);
+            if (trail != null)
+            {
+                trail.gameObject.SetActive(true);
+            }
+
+        }
+        else
+        {
+            trail.gameObject.SetActive(false);
+
+        }
+        if (attackState)
+        {
+            animator.SetBool(AnimationStrings.AttackState, true);
+            animator.SetBool(AnimationStrings.Move, false);
+            animator.SetInteger(AnimationStrings.Random, randomnumbers);
+            ramdom();
+
+        }
+
+
+    }
+
+    public bool CanMove
+    {
+        get
+        {
+            return animator.GetBool(AnimationStrings.canMove);
+        }
+    }
+
+
+    public void ramdom()
+    {
+        if (!attacking)
+        {
+            randomnumbers = UnityEngine.Random.Range(0, 5); // Ensure it selects between 0, 1, and 2
+            if (randomnumbers == 1)
+            {
+                attackDirection = (player.transform.position - transform.position).normalized;
+            }
+
+
+        }
+    }
+
+    void InstantiateInFacingDirection()
+    {
+        // Calculate the position to instantiate the object
+        Vector2 instantiationPosition = (Vector2)transform.position + (Vector2)transform.right * instantiationDistance + instantiationOffset;
+
+        // Instantiate the object
+        Instantiate(objectToInstantiate, instantiationPosition, Quaternion.identity);
+    }
+    private void Flip()
+    {
+        Vector3 localScale = transform.localScale;
+        localScale.x *= -1;
+        transform.localScale = localScale;
+
+
+    }
+    public void attackReach(float amount)
+    {
+        rb.velocity = new Vector2(rb.velocity.x + amount, rb.velocity.y);
+
+    }
 }

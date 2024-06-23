@@ -37,7 +37,6 @@ public class PlayerMovementMain : MonoBehaviour
 
     private void Start()
     {
-
     }
 
     private void Awake()
@@ -126,7 +125,7 @@ public class PlayerMovementMain : MonoBehaviour
 
         }
     }
-
+    
     public void Jump(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -137,7 +136,9 @@ public class PlayerMovementMain : MonoBehaviour
 
     private void HandleJump()
     {
-        if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f && isAlive && stamina > rolljumpstamina)
+        
+        
+        if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f && isAlive && stamina > rolljumpstamina &&CanMove  )
         {
             animator.SetTrigger(AnimationStrings.Jump);
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
@@ -145,6 +146,7 @@ public class PlayerMovementMain : MonoBehaviour
             jumpBufferCounter = 0f; // Reset the buffer counter after jumping
             UIcontrol.ReduceStamina(rolljumpstamina);
         }
+        
     }
 
     public void Roll(InputAction.CallbackContext context)
@@ -157,7 +159,7 @@ public class PlayerMovementMain : MonoBehaviour
 
     private void HandleRoll()
     {
-        if (rollBufferCounter > 0f && touchingdirection.IsGrounded && isAlive && CanMove &&!isRolling && stamina > rolljumpstamina)
+        if (rollBufferCounter > 0f && touchingdirection.IsGrounded && isAlive && CanMove &&!isRolling && stamina > rolljumpstamina &&CanMove)
         {
             float inputDirection = horizontal != 0 ? Mathf.Sign(horizontal) : (isFacingRight ? 1 : -1);
 
@@ -222,5 +224,12 @@ public class PlayerMovementMain : MonoBehaviour
             transform.localScale = localScale;
 
 
+    }
+    public void AttackMoving(float x, float y)
+    {
+        float direction = isFacingRight ? 1 : -1;
+
+        // Apply the velocity in the x direction according to the direction
+        rb.velocity = new Vector2(direction * x, rb.velocity.y + y);
     }
 }

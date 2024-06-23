@@ -7,6 +7,13 @@ internal class AnimationStrings
     internal static string Ismoving = "Ismoving";
     internal static string Grounded = "IsGrounded";
     internal static string Attack = "Attack";
+    internal static string AirAttack = "AirAttack";
+
+    internal static string Attacking = "Attacking";
+    internal static string RunChargeAttack = "RunChargeAttack";
+
+    internal static string Random = "Random";
+
     internal static string Hold = "Hold";
     internal static string StrongAttack = "StrongAttack";
     internal static string Yvelocity = "Yvelo";
@@ -17,10 +24,14 @@ internal class AnimationStrings
     internal static string isOnWall = "IsOnWall";
     internal static string isOnCelling = "IsOnCeilling";
     internal static string canMove = "canMove";
+    internal static string Turnable = "Turnable";
     internal static string hasTarget = "hasTarget";
     internal static string isAlive = "isAlive";
     internal static string hit = "hit";
     internal static string lockVelocity = "lockVelocity";
+    internal static string AttackState = "AttackState";
+    internal static string Move = "Move";
+
 
 
 }

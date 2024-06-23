@@ -5,12 +5,13 @@ using UnityEngine;
 public class attack : MonoBehaviour
 {
     public float attackdamage = 30;
+    public float poiseDamgage = 20;
     Collider2D attackcollider;
     public bool ischarge;
     private bool ishit;
     private UIController uicontroller;
-    public float knockbackForceX = 50f; // Adjust the knockback force for the x-axis as needed
-    public float knockbackForceY = 50f; // Adjust the knockback force for the y-axis as needed
+    public float knockbackForceX = 10f; // Adjust the knockback force for the x-axis as needed
+    public float knockbackForceY = 10f; // Adjust the knockback force for the y-axis as needed
 
     private void Start()
     {
@@ -22,6 +23,13 @@ public class attack : MonoBehaviour
         GameObject playerObject = GameObject.Find("Player");
         uicontroller = playerObject.GetComponent<UIController>();
         ishit = false;
+        if(ischarge)
+        {
+            knockbackForceX *= 1.5f;
+            knockbackForceY *= 1.5f;
+            attackdamage *= 2f;
+            poiseDamgage *= 3f;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -29,44 +37,37 @@ public class attack : MonoBehaviour
         DamageAble damageAble = collision.GetComponent<DamageAble>();
         if(damageAble != null)
         {
-            damageAble.Hit(attackdamage);
+            if(damageAble.poise <=0)
+            {
+                Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    Vector2 knockbackDirection = (collision.transform.position - transform.position).normalized;
+                    rb.velocity = Vector2.zero; // Reset the velocity to prevent accumulation of forces
+                    Vector2 knockbackForce = new Vector2(knockbackDirection.x * knockbackForceX, knockbackDirection.y + knockbackForceY);
+                    rb.AddForce(knockbackForce, ForceMode2D.Impulse);
+                }
+
+
+            }
+            damageAble.Hit(attackdamage, poiseDamgage);
+
+
             if (collision.CompareTag("Enemy"))
             {
                 if (damageAble != null)
                 {
                     uicontroller.RecoverAfterAttack(ischarge, 1f);
+                    
                 }
 
             }
         }
-        Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            // Calculate the direction from the current object to the collided object
-            Vector2 knockbackDirection = (collision.transform.position - transform.position).normalized;
-
-            // Apply the knockback force to the collided object
-            rb.velocity = Vector2.zero; // Reset the velocity to prevent accumulation of forces
-
-            // Adjust the knockback force for each axis
-            Vector2 knockbackForce = new Vector2(knockbackDirection.x * knockbackForceX, knockbackDirection.y * knockbackForceY);
-            rb.AddForce(knockbackForce, ForceMode2D.Impulse);
-        }
+ 
 
     }
-    Vector2 CalculateKnockback(Vector2 knockback)
-    {
-        if (transform.parent.localScale.x > 0)
-        {
-            return knockback;
 
-        }
-        else
-        {
-            Vector2 invertedKnockback = new Vector2(-knockback.x, knockback.y);
-            return invertedKnockback;
-        }
-    }
+
     public bool isHit()
     {
         return ishit;

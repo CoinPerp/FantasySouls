@@ -69,10 +69,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -133,8 +133,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: df6980baa35e8b74fbc827ffe57d77a0
-      internalID: 1410835846
+      spriteID: 08a02ef39c20ba648b804c4f2ae44570
+      internalID: 2049185547
       vertices: []
       indices: 
       edges: []
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8b2716af98dc10a419189ac8b0ad3a27
-      internalID: -711930345
+      spriteID: 241ebfaf0101eb8469ec1e6b5f131687
+      internalID: -1640981327
       vertices: []
       indices: 
       edges: []
@@ -175,8 +175,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2c042c8a602256d49933b2c2a94538a3
-      internalID: 860251179
+      spriteID: 15fcbd62de5f5ba4bab893f697d8901b
+      internalID: -8079450
       vertices: []
       indices: 
       edges: []
@@ -196,8 +196,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 200759964943d2045825d3f6c2cd5f5d
-      internalID: -1678480709
+      spriteID: 50131d308fbf8644887c3ebb0754bf6d
+      internalID: -391622919
       vertices: []
       indices: 
       edges: []
@@ -217,8 +217,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3e86548567bfb03489fea4c79b06ef2d
-      internalID: -1086188456
+      spriteID: a1f58e784d6568447aefe284494c62aa
+      internalID: -1013115839
       vertices: []
       indices: 
       edges: []
@@ -238,8 +238,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0924f26bed3305e49861976e294008e6
-      internalID: -942680927
+      spriteID: e9a4465cbb425034c9f27c970cbd138b
+      internalID: -1986642303
       vertices: []
       indices: 
       edges: []
@@ -259,8 +259,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7e657712975905943b470d225a26f92d
-      internalID: 25663216
+      spriteID: 6fc53dddb9061d54f94fe991fea7dfaa
+      internalID: -1566320567
       vertices: []
       indices: 
       edges: []
@@ -280,8 +280,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f981ad092c4a7154f83336c59fc95417
-      internalID: 1002597139
+      spriteID: 61b58145478a6c940ae43e4461bc1413
+      internalID: -1028506420
       vertices: []
       indices: 
       edges: []
@@ -301,8 +301,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ca0c1ec5f7d3eaa4b877afe4ed804b0c
-      internalID: -1917228254
+      spriteID: 3453a1c3c862dc7409404166dcaa372f
+      internalID: -1506742978
       vertices: []
       indices: 
       edges: []
@@ -322,8 +322,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a888acfedb6819743ae52d14c655cf96
-      internalID: -148574148
+      spriteID: 63096115ed482774dbadeb85db50a437
+      internalID: 247129220
       vertices: []
       indices: 
       edges: []
@@ -339,16 +339,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      _AttackCombo_4: -1086188456
-      _AttackCombo_8: -1917228254
-      _AttackCombo_3: -1678480709
-      _AttackCombo_9: -148574148
-      _AttackCombo_1: -711930345
-      _AttackCombo_2: 860251179
-      _AttackCombo_0: 1410835846
-      _AttackCombo_7: 1002597139
-      _AttackCombo_5: -942680927
-      _AttackCombo_6: 25663216
+      _AttackCombo_4: -1013115839
+      _AttackCombo_8: -1506742978
+      _AttackCombo_3: -391622919
+      _AttackCombo_9: 247129220
+      _AttackCombo_1: -1640981327
+      _AttackCombo_2: -8079450
+      _AttackCombo_0: 2049185547
+      _AttackCombo_7: -1028506420
+      _AttackCombo_5: -1986642303
+      _AttackCombo_6: -1566320567
   spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 
