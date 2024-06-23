@@ -1,2 +1,2 @@
 # FantasySouls
-An opensource 2d role Playing game
+An opensource 2d role playign game
